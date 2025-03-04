@@ -1,23 +1,29 @@
-from dotenv import load_dotenv
-from telebot import TeleBot, types
+import logging
 import os
 import requests
+
+from dotenv import load_dotenv
+from telebot import TeleBot, types
 
 
 load_dotenv()
 secret_token = os.getenv('TOKEN')
 bot = TeleBot(token=secret_token)
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+)
 URL = 'https://api.thecatapi.com/v1/images/search'
 
 
 def get_image():
     try:
-        response = requests.get(URL).json()
+        response = requests.get(URL)
     except Exception as error:
-        print(error)
+        logging.error(f'Ошибка при запросе к основному API: {error}')
         new_url = 'https://api.thedogapi.com/v1/images/search'
         response = requests.get(new_url)
-
     response = response.json()
     random_cat = response[0].get('url')
     return random_cat
@@ -59,7 +65,7 @@ def say_hi(message):
 
 
 def main():
-    bot.polling()
+    bot.polling(non_stop=True)
 
 
 if __name__ == '__main__':
