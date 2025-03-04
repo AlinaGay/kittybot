@@ -11,7 +11,14 @@ URL = 'https://api.thecatapi.com/v1/images/search'
 
 
 def get_image():
-    response = requests.get(URL).json()
+    try:
+        response = requests.get(URL).json()
+    except Exception as error:
+        print(error)
+        new_url = 'https://api.thedogapi.com/v1/images/search'
+        response = requests.get(new_url)
+
+    response = response.json()
     random_cat = response[0].get('url')
     return random_cat
 
@@ -51,4 +58,9 @@ def say_hi(message):
     bot.send_message(chat_id=chat_id, text='Привет, я KittyBot!')
 
 
-bot.polling()
+def main():
+    bot.polling()
+
+
+if __name__ == '__main__':
+    main()
